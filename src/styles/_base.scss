@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-base); // Usare variabili CSS se si vuole flessibil
+  background-color: var(--body-bg);
+  color: #333;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}

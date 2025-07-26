@@ -6,11 +6,13 @@
  * @param {function} props.onClose - Funzione per chiudere il modale.
  * @param {function} props.onSave - Funzione per salvare la lista.
  */
+import React, { useState, useEffect, useContext } from 'react';
+import { UIContext } from '../../contexts/UIContext';
+
 const ListModal = ({ show, list, onClose, onSave }) => {
   const [name, setName] = useState('');
   const { showNotification } = useContext(UIContext);
 
-  // Imposta il nome della lista quando il modale viene mostrato o la lista cambia.
   useEffect(() => {
     if (show) {
       setName(list ? list.name : '');
@@ -23,8 +25,8 @@ const ListModal = ({ show, list, onClose, onSave }) => {
       showNotification('Il nome della lista non può essere vuoto.', 'warning');
       return;
     }
-    onSave({ ...list, name }); // Passa l'oggetto lista con il nome aggiornato.
-    onClose(); // Chiudi il modale dopo il salvataggio.
+    onSave({ ...list, name });
+    onClose();
   };
 
   if (!show) return null;
@@ -61,3 +63,5 @@ const ListModal = ({ show, list, onClose, onSave }) => {
     </div>
   );
 };
+
+export default ListModal;

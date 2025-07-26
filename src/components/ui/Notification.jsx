@@ -1,10 +1,5 @@
-/**
- * Componente per visualizzare notifiche temporanee.
- * @param {object} props - Le proprietà del componente.
- * @param {string} props.message - Il messaggio della notifica.
- * @param {'success'|'danger'|'warning'|'info'} props.type - Il tipo di notifica per lo stile.
- * @param {function} props.onClose - Funzione per chiudere la notifica.
- */
+import React from 'react';
+
 const Notification = ({ message, type, onClose }) => {
   if (!message) return null;
   return (
@@ -15,3 +10,4 @@ const Notification = ({ message, type, onClose }) => {
   );
 };
 
+export default Notification;

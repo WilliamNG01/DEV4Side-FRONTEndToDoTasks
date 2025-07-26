@@ -1,0 +1,13 @@
+.card {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-lg);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  @include shadow-elevation(1);
+}
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: var(--rounded-pill);
+  // ... altri stili per i bottoni
+}

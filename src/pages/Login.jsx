@@ -1,6 +1,7 @@
-/**
- * Componente per la schermata di Login.
- */
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
+import { UIContext } from '../contexts/UIContext';
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -50,3 +51,5 @@ const Login = () => {
     </div>
   );
 };
+
+export default Login;

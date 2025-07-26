@@ -12,7 +12,7 @@ const UIContext = createContext(null);
 // Sostituisci questo URL con l'indirizzo del tuo backend API .NET 8.
 const API_BASE_URL = 'http://localhost:5000/api'; 
 
-const api = {
+const apiService = {
   /**
    * Effettua una richiesta di login al backend.
    * @param {object} credentials - Oggetto contenente username e password.
@@ -80,3 +80,4 @@ const api = {
     }
   },
 };
+export default apiService;

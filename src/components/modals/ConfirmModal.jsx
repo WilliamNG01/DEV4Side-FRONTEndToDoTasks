@@ -29,3 +29,4 @@ const ConfirmModal = ({ show, title, message, onConfirm, onCancel }) => {
     </div>
   );
 };
+export default ConfirmModal;

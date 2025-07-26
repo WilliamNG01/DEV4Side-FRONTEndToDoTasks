@@ -1,0 +1,12 @@
+@mixin shadow-elevation($level) {
+  @if $level == 1 {
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+  } @else if $level == 2 {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+  } @else if $level == 3 {
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175);
+  }
+}
+@mixin rounded-pill {
+  border-radius: 50rem;
+}

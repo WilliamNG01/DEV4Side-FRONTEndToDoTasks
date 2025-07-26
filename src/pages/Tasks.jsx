@@ -1,38 +1,37 @@
-/**
- * Componente per la visualizzazione e gestione dei task di una lista selezionata.
- */
+
+import React, { useState, useEffect, useContext } from 'react';
+import { DataContext } from '../contexts/DataContext';
+import { UIContext } from '../contexts/UIContext';
+import ConfirmModal from '../components/modals/ConfirmModal';
+import TaskModal from '../components/modals/TaskModal';
+
 const Tasks = () => {
   const { tasks, fetchTasks, addTask, updateTask, deleteTask, lists } = useContext(DataContext);
   const { selectedListId, setCurrentPage, setSelectedListId, showNotification } = useContext(UIContext);
 
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const [editingTask, setEditingTask] = useState(null); // Task da modificare nel modale
+  const [editingTask, setEditingTask] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState(null); // Task da eliminare
+  const [taskToDelete, setTaskToDelete] = useState(null);
 
-  // Trova la lista corrente basandosi su selectedListId.
   const currentList = lists.find(l => l.id === selectedListId);
 
-  // Carica i task della lista selezionata all'avvio o al cambio di selectedListId.
   useEffect(() => {
     if (selectedListId) {
       fetchTasks(selectedListId);
     }
   }, [selectedListId, fetchTasks]);
 
-  // Gestore per aprire il modale di creazione task.
   const handleCreateTask = () => {
-    setEditingTask(null); // Nessun task in modifica
+    setEditingTask(null);
     setShowTaskModal(true);
   };
 
-  // Gestore per aprire il modale di modifica task.
   const handleEditTask = (task) => {
     setEditingTask(task);
     setShowTaskModal(true);
   };
 
-  // Gestore per salvare un task (creazione o modifica).
   const handleSaveTask = async (task) => {
     try {
       if (task.id) {
@@ -47,13 +46,11 @@ const Tasks = () => {
     }
   };
 
-  // Gestore per preparare l'eliminazione di un task (mostra modale di conferma).
   const handleDeleteTask = (task) => {
     setTaskToDelete(task);
     setShowConfirmModal(true);
   };
 
-  // Funzione di conferma per l'eliminazione effettiva del task.
   const confirmDeleteTask = async () => {
     try {
       await deleteTask(taskToDelete.id);
@@ -61,13 +58,11 @@ const Tasks = () => {
     } catch (error) {
       showNotification(error.message || 'Errore durante l\'eliminazione del task.', 'danger');
     } finally {
-      // Resetta lo stato del modale di conferma.
       setShowConfirmModal(false);
       setTaskToDelete(null);
     }
   };
 
-  // Gestore per cambiare lo stato di un task.
   const handleStatusChange = async (task, newStatus) => {
     try {
       await updateTask({ ...task, status: newStatus });
@@ -77,7 +72,6 @@ const Tasks = () => {
     }
   };
 
-  // Funzione helper per ottenere la classe CSS del badge in base allo stato del task.
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'Da fare': return 'bg-secondary';
@@ -118,7 +112,6 @@ const Tasks = () => {
                     )}
                   </div>
                   <div className="d-flex justify-content-between align-items-center mt-auto">
-                    {/* Dropdown per il cambio di stato */}
                     <div className="btn-group" role="group">
                       <button
                         id={`dropdownStatus${task.id}`}
@@ -135,7 +128,6 @@ const Tasks = () => {
                         <li><a className="dropdown-item" href="#" onClick={() => handleStatusChange(task, 'Completato')}>Completato</a></li>
                       </ul>
                     </div>
-                    {/* Pulsanti di modifica ed eliminazione task */}
                     <div>
                       <button className="btn btn-sm btn-outline-warning rounded-pill me-2" onClick={() => handleEditTask(task)}>
                         <i className="bi bi-pencil"></i> Modifica
@@ -152,15 +144,13 @@ const Tasks = () => {
         </div>
       )}
 
-      {/* Modale per creazione/modifica task */}
       <TaskModal
         show={showTaskModal}
         task={editingTask}
         onClose={() => setShowTaskModal(false)}
         onSave={handleSaveTask}
-        lists={lists} // Passa le liste per la selezione nel modale del task
+        lists={lists}
       />
-      {/* Modale di conferma eliminazione task */}
       <ConfirmModal
         show={showConfirmModal}
         title="Conferma Eliminazione Task"
@@ -171,3 +161,5 @@ const Tasks = () => {
     </div>
   );
 };
+
+export default Tasks;

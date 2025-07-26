@@ -1,77 +1,60 @@
-// --- Componente Principale dell'Applicazione ---
+// src/App.js - Il componente principale dell'applicazione
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { AuthContext } from './contexts/AuthContext';
+import { DataContext } from './contexts/DataContext';
+import { UIContext } from './contexts/UIContext';
+//import { api } from './api/apiService';
+import Header from './components/ui/Header';
+import Notification from './components/ui/Notification';
+import Login from './pages/Login';
+import Lists from './pages/Lists';
+import Tasks from './pages/Tasks';
+
 export default function App() {
-  // Stato per il token JWT, recuperato da localStorage all'avvio.
   const [token, setToken] = useState(localStorage.getItem('jwt_token'));
-  // Stati per liste e task.
   const [lists, setLists] = useState([]);
   const [tasks, setTasks] = useState([]);
-  // Stato per la pagina corrente ('login', 'lists', 'tasks').
-  const [currentPage, setCurrentPage] = useState(token ? 'lists' : 'login'); 
-  // Stato per l'ID della lista selezionata (per visualizzare i task).
+  const [currentPage, setCurrentPage] = useState(token ? 'lists' : 'login');
   const [selectedListId, setSelectedListId] = useState(null);
-
-  // Stato per le notifiche (messaggio e tipo).
   const [notification, setNotification] = useState({ message: '', type: '' });
-  
-  /**
-   * Mostra una notifica temporanea.
-   * @param {string} message - Il messaggio da visualizzare.
-   * @param {'success'|'danger'|'warning'|'info'} type - Il tipo di notifica.
-   */
+
   const showNotification = useCallback((message, type) => {
     setNotification({ message, type });
-    // Nasconde la notifica dopo 5 secondi.
     const timer = setTimeout(() => {
       setNotification({ message: '', type: '' });
-    }, 5000); 
-    return () => clearTimeout(timer); // Cleanup del timer.
+    }, 5000);
+    return () => clearTimeout(timer);
   }, []);
 
-  // --- Funzioni per il contesto di Autenticazione ---
-  /**
-   * Gestisce il processo di login.
-   * @param {string} username - Il nome utente.
-   * @param {string} password - La password.
-   */
   const login = useCallback(async (username, password) => {
     const fetchedToken = await api.login({ username, password });
     setToken(fetchedToken);
-    localStorage.setItem('jwt_token', fetchedToken); // Salva il token in localStorage.
-    setCurrentPage('lists'); // Naviga alla pagina delle liste dopo il login.
+    localStorage.setItem('jwt_token', fetchedToken);
+    setCurrentPage('lists');
   }, []);
 
-  /**
-   * Gestisce il processo di logout.
-   */
   const logout = useCallback(() => {
     setToken(null);
-    localStorage.removeItem('jwt_token'); // Rimuove il token da localStorage.
-    setLists([]); // Pulisce i dati.
+    localStorage.removeItem('jwt_token');
+    setLists([]);
     setTasks([]);
     setSelectedListId(null);
-    setCurrentPage('login'); // Naviga alla pagina di login.
+    setCurrentPage('login');
     showNotification('Logout effettuato con successo.', 'info');
   }, [showNotification]);
 
-  // --- Funzioni per il contesto Dati (API Calls) ---
-  /**
-   * Recupera tutte le liste dal backend.
-   */
   const fetchLists = useCallback(async () => {
-    if (!token) return; // Non procedere se non c'è un token.
+    if (!token) return;
     try {
       const data = await api.fetchWithAuth('/lists', 'GET', null, token);
       setLists(data);
     } catch (error) {
       showNotification(error.message, 'danger');
-      if (error.message.includes('Non autorizzato')) logout(); // Se non autorizzato, forza il logout.
+      if (error.message.includes('Non autorizzato')) logout();
     }
   }, [token, logout, showNotification]);
 
-  /**
-   * Aggiunge una nuova lista al backend.
-   * @param {object} list - L'oggetto lista da aggiungere.
-   */
   const addList = useCallback(async (list) => {
     if (!token) return;
     try {
@@ -80,19 +63,14 @@ export default function App() {
     } catch (error) {
       showNotification(error.message, 'danger');
       if (error.message.includes('Non autorizzato')) logout();
-      throw error; // Rilancia l'errore per il gestore del modale.
+      throw error;
     }
   }, [token, logout, showNotification]);
 
-  /**
-   * Aggiorna una lista esistente nel backend.
-   * @param {object} list - L'oggetto lista aggiornato.
-   */
   const updateList = useCallback(async (list) => {
     if (!token) return;
     try {
-      // Assumiamo che il backend supporti PUT /lists/{id} per l'aggiornamento.
-      await api.fetchWithAuth(`/lists/${list.id}`, 'PUT', list, token); 
+      await api.fetchWithAuth(`/lists/${list.id}`, 'PUT', list, token);
       setLists((prev) => prev.map((l) => (l.id === list.id ? list : l)));
     } catch (error) {
       showNotification(error.message, 'danger');
@@ -101,16 +79,11 @@ export default function App() {
     }
   }, [token, logout, showNotification]);
 
-  /**
-   * Elimina una lista dal backend.
-   * @param {string} id - L'ID della lista da eliminare.
-   */
   const deleteList = useCallback(async (id) => {
     if (!token) return;
     try {
       await api.fetchWithAuth(`/lists/${id}`, 'DELETE', null, token);
       setLists((prev) => prev.filter((l) => l.id !== id));
-      // Se la lista eliminata era quella selezionata, torna alla visualizzazione delle liste.
       if (selectedListId === id) {
         setSelectedListId(null);
         setCurrentPage('lists');
@@ -122,10 +95,6 @@ export default function App() {
     }
   }, [token, selectedListId, logout, showNotification]);
 
-  /**
-   * Recupera i task per una specifica lista dal backend.
-   * @param {string} listId - L'ID della lista di cui recuperare i task.
-   */
   const fetchTasks = useCallback(async (listId) => {
     if (!token || !listId) return;
     try {
@@ -137,10 +106,6 @@ export default function App() {
     }
   }, [token, logout, showNotification]);
 
-  /**
-   * Aggiunge un nuovo task al backend.
-   * @param {object} task - L'oggetto task da aggiungere.
-   */
   const addTask = useCallback(async (task) => {
     if (!token) return;
     try {
@@ -153,10 +118,6 @@ export default function App() {
     }
   }, [token, logout, showNotification]);
 
-  /**
-   * Aggiorna un task esistente nel backend.
-   * @param {object} task - L'oggetto task aggiornato.
-   */
   const updateTask = useCallback(async (task) => {
     if (!token) return;
     try {
@@ -169,10 +130,6 @@ export default function App() {
     }
   }, [token, logout, showNotification]);
 
-  /**
-   * Elimina un task dal backend.
-   * @param {string} id - L'ID del task da eliminare.
-   */
   const deleteTask = useCallback(async (id) => {
     if (!token) return;
     try {
@@ -185,17 +142,15 @@ export default function App() {
     }
   }, [token, logout, showNotification]);
 
-  // --- Effetto per il controllo iniziale dell'autenticazione ---
   useEffect(() => {
     if (token) {
-      setCurrentPage('lists'); // Se c'è un token, vai alla pagina delle liste.
-      fetchLists(); // E recupera le liste.
+      setCurrentPage('lists');
+      fetchLists();
     } else {
-      setCurrentPage('login'); // Altrimenti, vai alla pagina di login.
+      setCurrentPage('login');
     }
   }, [token, fetchLists]);
 
-  // --- Funzione per il rendering condizionale della pagina ---
   const renderPage = () => {
     switch (currentPage) {
       case 'login':
@@ -205,23 +160,20 @@ export default function App() {
       case 'tasks':
         return <Tasks />;
       default:
-        return <Login />; // Fallback.
+        return <Login />;
     }
   };
 
   return (
     <>
-      {/* CDN di Bootstrap CSS per stili base e responsive */}
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossOrigin="anonymous"></link>
-      {/* CDN di Bootstrap Icons per le icone (es. plus-circle, pencil, trash, arrow-left) */}
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></link>
-      
-      {/* Stili CSS personalizzati per arrotondamenti, ombre e colori consistenti */}
+
       <style>
         {`
           body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa; /* Sfondo chiaro */
+            background-color: #f8f9fa;
           }
           .rounded-pill {
             border-radius: 50rem !important;
@@ -239,7 +191,6 @@ export default function App() {
             display: block;
             width: 100%;
           }
-          /* Stili per i modali per centrarli e renderli visibili */
           .modal.d-block {
             display: flex !important;
             align-items: center;
@@ -257,12 +208,11 @@ export default function App() {
             margin: -1rem -1rem -1rem auto;
           }
           .btn-close-white {
-            filter: invert(1) grayscale(100%) brightness(200%); /* Rende la X bianca */
+            filter: invert(1) grayscale(100%) brightness(200%);
           }
           .alert {
-            z-index: 1050; /* Assicura che le notifiche siano sopra altri elementi */
+            z-index: 1050;
           }
-          /* Override colori Bootstrap per consistenza e personalizzazione */
           .bg-primary { background-color: #007bff !important; }
           .text-primary { color: #007bff !important; }
           .btn-primary {
@@ -352,7 +302,6 @@ export default function App() {
         `}
       </style>
 
-      {/* Fornisce i contesti a tutti i componenti figli */}
       <AuthContext.Provider value={{ token, login, logout }}>
         <UIContext.Provider value={{ currentPage, setCurrentPage, selectedListId, setSelectedListId, showNotification }}>
           <DataContext.Provider value={{
@@ -360,17 +309,15 @@ export default function App() {
             fetchLists, addList, updateList, deleteList,
             fetchTasks, addTask, updateTask, deleteTask
           }}>
-            <Header /> {/* Header visibile su tutte le pagine (tranne login) */}
+            <Header />
             <main className="flex-grow-1">
-              {renderPage()} {/* Rendering condizionale della pagina corrente */}
+              {renderPage()}
             </main>
-            {/* Notifica visibile in basso a destra */}
             <Notification message={notification.message} type={notification.type} onClose={() => setNotification({ message: '', type: '' })} />
           </DataContext.Provider>
         </UIContext.Provider>
       </AuthContext.Provider>
 
-      {/* CDN di Bootstrap JS per funzionalità come dropdown, toggler e modali */}
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossOrigin="anonymous"></script>
     </>
   );

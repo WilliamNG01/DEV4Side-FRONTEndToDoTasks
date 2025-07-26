@@ -1,39 +1,37 @@
-/**
- * Componente per la visualizzazione e gestione delle liste.
- */
+import React, { useState, useEffect, useContext } from 'react';
+import { DataContext } from '../contexts/DataContext';
+import { UIContext } from '../contexts/UIContext';
+import ConfirmModal from '../components/modals/ConfirmModal';
+import ListModal from '../components/modals/ListModal';
+
 const Lists = () => {
   const { lists, fetchLists, addList, updateList, deleteList } = useContext(DataContext);
   const { setCurrentPage, setSelectedListId, showNotification } = useContext(UIContext);
 
   const [showListModal, setShowListModal] = useState(false);
-  const [editingList, setEditingList] = useState(null); // Lista da modificare nel modale
+  const [editingList, setEditingList] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [listToDelete, setListToDelete] = useState(null); // Lista da eliminare
+  const [listToDelete, setListToDelete] = useState(null);
 
-  // Carica le liste all'avvio del componente.
   useEffect(() => {
     fetchLists();
   }, [fetchLists]);
 
-  // Gestore per visualizzare i task di una lista selezionata.
   const handleViewTasks = (listId) => {
     setSelectedListId(listId);
     setCurrentPage('tasks');
   };
 
-  // Gestore per aprire il modale di creazione lista.
   const handleCreateList = () => {
-    setEditingList(null); // Nessuna lista in modifica
+    setEditingList(null);
     setShowListModal(true);
   };
 
-  // Gestore per aprire il modale di modifica lista.
   const handleEditList = (list) => {
     setEditingList(list);
     setShowListModal(true);
   };
 
-  // Gestore per salvare una lista (creazione o modifica).
   const handleSaveList = async (list) => {
     try {
       if (list.id) {
@@ -48,13 +46,11 @@ const Lists = () => {
     }
   };
 
-  // Gestore per preparare l'eliminazione di una lista (mostra modale di conferma).
   const handleDeleteList = (list) => {
     setListToDelete(list);
     setShowConfirmModal(true);
   };
 
-  // Funzione di conferma per l'eliminazione effettiva della lista.
   const confirmDeleteList = async () => {
     try {
       await deleteList(listToDelete.id);
@@ -62,7 +58,6 @@ const Lists = () => {
     } catch (error) {
       showNotification(error.message || 'Errore durante l\'eliminazione della lista.', 'danger');
     } finally {
-      // Resetta lo stato del modale di conferma.
       setShowConfirmModal(false);
       setListToDelete(null);
     }
@@ -106,14 +101,12 @@ const Lists = () => {
         </div>
       )}
 
-      {/* Modale per creazione/modifica lista */}
       <ListModal
         show={showListModal}
         list={editingList}
         onClose={() => setShowListModal(false)}
         onSave={handleSaveList}
       />
-      {/* Modale di conferma eliminazione lista */}
       <ConfirmModal
         show={showConfirmModal}
         title="Conferma Eliminazione Lista"
@@ -124,3 +117,5 @@ const Lists = () => {
     </div>
   );
 };
+
+export default Lists;

@@ -1,12 +1,6 @@
-/**
- * Componente modale per la creazione o modifica di un task.
- * @param {object} props - Le proprietà del componente.
- * @param {boolean} props.show - Indica se il modale deve essere mostrato.
- * @param {object|null} props.task - L'oggetto task da modificare (null per la creazione).
- * @param {function} props.onClose - Funzione per chiudere il modale.
- * @param {function} props.onSave - Funzione per salvare il task.
- * @param {array} props.lists - Array di tutte le liste disponibili per selezionare la lista del task.
- */
+import React, { useState, useEffect, useContext } from 'react';
+import { UIContext } from '../../contexts/UIContext'; // Importa UIContext
+
 const TaskModal = ({ show, task, onClose, onSave, lists }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -15,23 +9,20 @@ const TaskModal = ({ show, task, onClose, onSave, lists }) => {
   const [listId, setListId] = useState('');
   const { showNotification } = useContext(UIContext);
 
-  // Imposta i campi del task quando il modale viene mostrato o il task/liste cambiano.
   useEffect(() => {
     if (show) {
       if (task) {
         setTitle(task.title);
         setDescription(task.description);
-        // Formatta la data per l'input type="date"
         setDueDate(task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '');
         setStatus(task.status);
         setListId(task.listId);
       } else {
-        // Valori di default per un nuovo task
         setTitle('');
         setDescription('');
         setDueDate('');
         setStatus('Da fare');
-        setListId(lists.length > 0 ? lists[0].id : ''); // Seleziona la prima lista di default
+        setListId(lists.length > 0 ? lists[0].id : '');
       }
     }
   }, [show, task, lists]);
@@ -43,10 +34,9 @@ const TaskModal = ({ show, task, onClose, onSave, lists }) => {
       return;
     }
     onSave({
-      ...task, // Mantiene l'ID se è una modifica
+      ...task,
       title,
       description,
-      // Converte la data in formato ISO string per il backend
       dueDate: dueDate ? new Date(dueDate).toISOString() : null,
       status,
       listId,
@@ -138,3 +128,5 @@ const TaskModal = ({ show, task, onClose, onSave, lists }) => {
     </div>
   );
 };
+
+export default TaskModal;
