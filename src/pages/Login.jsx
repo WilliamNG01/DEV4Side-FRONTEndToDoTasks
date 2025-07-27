@@ -1,14 +1,16 @@
+// src/pages/Login.jsx
 import React, { useState, useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
-import { UIContext } from '../contexts/UIContext';
+import { AuthContext } from '../contexts/AuthContext.jsx';
+import { UIContext } from '../contexts/UIContext.jsx'; // Importa UIContext
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useContext(AuthContext);
-  const { showNotification } = useContext(UIContext);
+  const { showNotification, setCurrentPage } = useContext(UIContext); // Ottieni setCurrentPage
 
   const handleSubmit = async (e) => {
+    debugger;
     e.preventDefault();
     try {
       await login(username, password);
@@ -22,6 +24,7 @@ const Login = () => {
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div className="card shadow-lg p-4 rounded-lg" style={{ maxWidth: '400px', width: '100%' }}>
         <h2 className="card-title text-center mb-4 text-primary">Login</h2>
+        {/* ... codice del form di login ... */}
         <form onSubmit={handleSubmit}>
           <div className="form-group mb-3">
             <label htmlFor="username">Username</label>
@@ -47,6 +50,17 @@ const Login = () => {
           </div>
           <button type="submit" className="btn btn-primary btn-block w-100 rounded-pill py-2">Accedi</button>
         </form>
+        {/* Nuovo pulsante per la registrazione */}
+        <div className="text-center mt-3">
+          <p className="text-muted mb-2">Non hai un account?</p>
+          <button
+            type="button"
+            className="btn btn-outline-success w-100 rounded-pill py-2"
+            onClick={() => setCurrentPage('register')} // Cambia pagina a 'register'
+          >
+            Registrati Ora
+          </button>
+        </div>
       </div>
     </div>
   );

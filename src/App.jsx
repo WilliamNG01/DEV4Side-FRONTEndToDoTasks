@@ -4,12 +4,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { AuthContext } from './contexts/AuthContext';
 import { DataContext } from './contexts/DataContext';
 import { UIContext } from './contexts/UIContext';
-//import { api } from './api/apiService';
+import Api from './api/apiService.js';
 import Header from './components/ui/Header';
 import Notification from './components/ui/Notification';
 import Login from './pages/Login';
 import Lists from './pages/Lists';
 import Tasks from './pages/Tasks';
+import RegistrationForm from './pages/RegistrationForm';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('jwt_token'));
@@ -27,8 +28,8 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const login = useCallback(async (username, password) => {
-    const fetchedToken = await api.login({ username, password });
+  const login = useCallback(async (usernameoremail, password) => {
+    const fetchedToken = await Api.login({ usernameoremail, password });
     setToken(fetchedToken);
     localStorage.setItem('jwt_token', fetchedToken);
     setCurrentPage('lists');
@@ -47,7 +48,7 @@ export default function App() {
   const fetchLists = useCallback(async () => {
     if (!token) return;
     try {
-      const data = await api.fetchWithAuth('/lists', 'GET', null, token);
+      const data = await Api.fetchWithAuth('/lists', 'GET', null, token);
       setLists(data);
     } catch (error) {
       showNotification(error.message, 'danger');
@@ -58,7 +59,7 @@ export default function App() {
   const addList = useCallback(async (list) => {
     if (!token) return;
     try {
-      const newList = await api.fetchWithAuth('/lists', 'POST', list, token);
+      const newList = await Api.fetchWithAuth('/lists', 'POST', list, token);
       setLists((prev) => [...prev, newList]);
     } catch (error) {
       showNotification(error.message, 'danger');
@@ -70,7 +71,7 @@ export default function App() {
   const updateList = useCallback(async (list) => {
     if (!token) return;
     try {
-      await api.fetchWithAuth(`/lists/${list.id}`, 'PUT', list, token);
+      await Api.fetchWithAuth(`/lists/${list.id}`, 'PUT', list, token);
       setLists((prev) => prev.map((l) => (l.id === list.id ? list : l)));
     } catch (error) {
       showNotification(error.message, 'danger');
@@ -82,7 +83,7 @@ export default function App() {
   const deleteList = useCallback(async (id) => {
     if (!token) return;
     try {
-      await api.fetchWithAuth(`/lists/${id}`, 'DELETE', null, token);
+      await Api.fetchWithAuth(`/lists/${id}`, 'DELETE', null, token);
       setLists((prev) => prev.filter((l) => l.id !== id));
       if (selectedListId === id) {
         setSelectedListId(null);
@@ -98,7 +99,7 @@ export default function App() {
   const fetchTasks = useCallback(async (listId) => {
     if (!token || !listId) return;
     try {
-      const data = await api.fetchWithAuth(`/tasks?listId=${listId}`, 'GET', null, token);
+      const data = await Api.fetchWithAuth(`/tasks?listId=${listId}`, 'GET', null, token);
       setTasks(data);
     } catch (error) {
       showNotification(error.message, 'danger');
@@ -109,7 +110,7 @@ export default function App() {
   const addTask = useCallback(async (task) => {
     if (!token) return;
     try {
-      const newTask = await api.fetchWithAuth('/tasks', 'POST', task, token);
+      const newTask = await Api.fetchWithAuth('/tasks', 'POST', task, token);
       setTasks((prev) => [...prev, newTask]);
     } catch (error) {
       showNotification(error.message, 'danger');
@@ -121,7 +122,7 @@ export default function App() {
   const updateTask = useCallback(async (task) => {
     if (!token) return;
     try {
-      await api.fetchWithAuth(`/tasks/${task.id}`, 'PUT', task, token);
+      await Api.fetchWithAuth(`/tasks/${task.id}`, 'PUT', task, token);
       setTasks((prev) => prev.map((t) => (t.id === task.id ? task : t)));
     } catch (error) {
       showNotification(error.message, 'danger');
@@ -133,7 +134,7 @@ export default function App() {
   const deleteTask = useCallback(async (id) => {
     if (!token) return;
     try {
-      await api.fetchWithAuth(`/tasks/${id}`, 'DELETE', null, token);
+      await Api.fetchWithAuth(`/tasks/${id}`, 'DELETE', null, token);
       setTasks((prev) => prev.filter((t) => t.id !== id));
     } catch (error) {
       showNotification(error.message, 'danger');
@@ -153,15 +154,17 @@ export default function App() {
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'login':
-        return <Login />;
-      case 'lists':
-        return <Lists />;
-      case 'tasks':
-        return <Tasks />;
-      default:
-        return <Login />;
-    }
+    case 'login':
+      return <Login />;
+    case 'register': 
+      return <RegistrationForm />;
+    case 'lists':
+      return <Lists />;
+    case 'tasks':
+      return <Tasks />;
+    default:
+      return <Login />;
+  }
   };
 
   return (
