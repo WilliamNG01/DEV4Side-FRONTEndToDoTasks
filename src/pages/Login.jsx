@@ -10,7 +10,6 @@ const Login = () => {
   const { showNotification, setCurrentPage } = useContext(UIContext); // Ottieni setCurrentPage
 
   const handleSubmit = async (e) => {
-    debugger;
     e.preventDefault();
     try {
       await login(username, password);

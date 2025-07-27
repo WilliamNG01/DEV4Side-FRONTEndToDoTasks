@@ -1,12 +1,173 @@
-# React + Vite
+# 📋 Task Board Semplificata - Frontend (React.js)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 Descrizione del Progetto
 
-Currently, two official plugins are available:
+**Task Board Semplificata** è una web app frontend sviluppata in **React.js**, progettata per la gestione di task personali organizzati in liste. L'app interagisce con un **API REST backend** (es. ASP.NET Core Web API) e offre un'interfaccia moderna, responsive e facilmente utilizzabile.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🎯 Obiettivi dell'Applicazione
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- ✅ Creazione, modifica ed eliminazione di **liste di task**
+- ✅ Gestione dei **task** (CRUD + cambio stato)
+- ✅ Visualizzazione dettagliata di ogni task: titolo, descrizione, scadenza, stato
+- ✅ Cambio stato: "Da fare", "In corso", "Completato"
+- ✅ Esperienza **responsive** su desktop, tablet e mobile
+
+---
+
+## 🔐 Funzionalità Autenticazione
+
+### Login
+
+- Login tramite **Username o Email** e **Password**
+- Gestione del **token JWT** per l'autenticazione persistente
+- Redirezione automatica alle liste dopo il login
+- Pulsante **"Registrati Ora"** nella schermata di login
+
+### Registrazione
+
+- Form con **nome, cognome, username, email, data di nascita, password e conferma password**
+- Verifica della password prima dell’invio
+
+---
+
+## 📂 Gestione Liste (`/lists`)
+
+- **Visualizzazione**: Mostra tutte le liste dell'utente autenticato
+- **Creazione**: Aggiunta di nuove liste
+- **Modifica**: Rinomina delle liste
+- **Eliminazione**: Rimozione di liste (con conferma) → rimuove anche i task associati
+
+---
+
+## ✅ Gestione Task (`/tasks`)
+
+- **Visualizzazione**: Mostra i task della lista selezionata
+- **Creazione**: Inserimento di nuovi task con dettagli completi
+- **Modifica**: Aggiornamento dei dati del task
+- **Eliminazione**: Cancellazione task (con conferma)
+- **Cambio Stato**: Da fare ⇉ In corso ⇉ Completato
+
+---
+
+## 🔔 Notifiche Utente
+
+- Notifiche **toast** in basso a destra per:
+  - Successi (es. "Lista creata con successo")
+  - Errori (es. "Errore di rete")
+  - Informazioni generali
+
+---
+
+## 🛠️ Architettura & Tecnologie
+
+### Framework & Librerie
+
+- **React.js** – UI dinamica e component-based
+- **Bootstrap** – Layout responsive
+- **React Context API** – Stato globale
+
+### Contesti Globali
+
+- `AuthContext.jsx`: Gestione token JWT, login, logout, fetch autenticati
+- `DataContext.jsx`: CRUD su liste e task con fetch protetti
+- `UIContext.jsx`: Navigazione, notifiche, stato dell’interfaccia
+
+### Stili
+
+- Stile personalizzato simulando **SCSS modularizzato**
+- Layout responsive con classi Bootstrap
+
+---
+
+## 🌐 Comunicazione API
+
+Tutte le operazioni (login, registrazione, gestione task/liste) avvengono tramite chiamate al **backend API REST**.
+
+> ⚠️ Assicurati che il backend sia avviato prima di usare il frontend.
+
+---
+
+## 📁 Struttura del Codice
+
+```
+src/
+├── api/               → Configurazione delle chiamate API
+├── components/        → Componenti riutilizzabili
+│   ├── modals/        → Modali per task e liste
+│   └── ui/            → UI generica (bottoni, notifiche)
+├── contexts/          → Gestione dello stato globale
+├── pages/             → Login, Registrazione, Liste, Task
+├── utils/             → Funzioni di supporto (es. validazioni)
+└── App.jsx            → Componente principale
+```
+
+---
+
+## 🚀 Avvio del Progetto
+
+### 1. Clona il repository
+
+```bash
+git clone https://github.com/WilliamNG01/DEV4Side-FRONTEndToDoTasks-.git
+cd DEV4Side-FRONTEndToDoTasks-
+```
+
+### 2. Installa le dipendenze
+
+```bash
+npm install
+# oppure
+yarn install
+```
+
+### 3. Configura l'URL del backend
+
+Apri `src/api/apiService.js` e modifica la costante `API_BASE_URL`:
+
+```js
+const API_BASE_URL = 'http://localhost:5000/api'; // ← Modifica questo URL
+```
+
+> Usa l’URL del backend reale se è deployato (es. Azure)
+
+### 4. Avvia il progetto
+
+```bash
+npm run dev
+# oppure
+yarn dev
+```
+
+L'app si aprirà automaticamente su: `http://localhost:5173/`
+
+---
+
+## 🧬 Utilizzo dell’Applicazione
+
+1. **Login / Registrazione**: All’avvio, effettua il login o registrati
+2. **Gestione Liste**: Crea, modifica o elimina le tue liste
+3. **Gestione Task**: Visualizza e gestisci i task dentro ogni lista
+4. **Logout**: Usa il pulsante nella barra di navigazione
+
+---
+
+## 📦 Requisiti
+
+- Node.js ≥ v18
+- Backend API REST funzionante (es. ASP.NET Core Web API)
+- Connessione Internet per caricare le dipendenze
+
+---
+
+## 💡 Conclusione
+
+Questa app fornisce una base solida per un sistema di gestione task personale, dimostrando:
+
+- Uso avanzato di React con Context API
+- Comunicazione sicura con API REST
+- Design responsive e UX curata
+
+> 📨 Per domande o contributi, apri una issue o un pull request nel repository!
+
