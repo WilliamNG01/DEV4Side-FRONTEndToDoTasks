@@ -1,7 +1,7 @@
-@import 'variables'; // Importa le variabili (colori, font, breakpoint)
-@import 'mixins';   // Importa i mixins riutilizzabili
-@import 'base';     // Stili base per body, tipografia, reset
-@import 'components'; // Stili per componenti specifici (card, button, form elements)
+@use 'variables' as *; // Importa le variabili (colori, font, breakpoint)
+@use 'mixins' as *;   // Importa i mixins riutilizzabili
+@use 'base' as *;     // Stili base per body, tipografia, reset
+@use 'components' as *; // Stili per componenti specifici (card, button, form elements)
 
 //body {
 //  font-family: $font-family-base;
