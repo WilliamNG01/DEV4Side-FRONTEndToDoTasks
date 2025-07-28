@@ -5,7 +5,7 @@ export const AuthContext = createContext(null);
 
 // URL base della tua API di backend. Assicurati di aggiornarlo con il tuo URL reale.
 // In un progetto reale, questo verrebbe gestito tramite variabili d'ambiente (es. process.env.REACT_APP_API_BASE_URL)
-const API_BASE_URL = 'https://localhost:7129'; 
+const API_BASE_URL = 'https://webapitodolist20250728153145.azurewebsites.net/'; 
 
 /**
  * Componente Provider per l'AuthContext.
