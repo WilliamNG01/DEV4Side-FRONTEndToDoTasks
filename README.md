@@ -4,6 +4,7 @@
 
 **Task Board Semplificata** è una web app frontend sviluppata in **React.js**, progettata per la gestione di task personali organizzati in liste. L'app interagisce con un **API REST backend** (es. ASP.NET Core Web API) e offre un'interfaccia moderna, responsive e facilmente utilizzabile.
 
+**Url del sito in costruzione** https://yellow-water-0e71ab51e.1.azurestaticapps.net/
 ---
 
 ## 🎯 Obiettivi dell'Applicazione
