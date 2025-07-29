@@ -11,8 +11,7 @@ const UIContext = createContext(null);
 
 // --- Servizio API per le chiamate al backend ---
 // Sostituisci questo URL con l'indirizzo del tuo backend API .NET 8.
-//const API_BASE_URL = 'https://webapitodolist20250728153145.azurewebsites.net';
-const API_BASE_URL = 'https://localhost:7129'; 
+const API_BASE_URL = 'https://webapitodolist20250728153145.azurewebsites.net';
 
 const Api = {
   

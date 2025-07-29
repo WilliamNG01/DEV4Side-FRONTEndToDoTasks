@@ -4,7 +4,7 @@ import { UIContext } from '../contexts/UIContext.jsx'; // Decommentato
 
 // URL base della tua API di backend. Assicurati di adattare questo URL.
 // In produzione, useresti variabili d'ambiente (es: process.env.REACT_APP_API_BASE_URL)
-const API_BASE_URL = 'https://localhost:7129'; // Adatta all'URL del tuo backend
+const API_BASE_URL = 'https://webapitodolist20250728153145.azurewebsites.net'; // Adatta all'URL del tuo backend
 
 const RegistrationForm = () => {
   const { showNotification } = useContext(UIContext); // Decommentato e usato
