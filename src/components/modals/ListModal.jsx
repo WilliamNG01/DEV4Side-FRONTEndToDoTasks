@@ -1,11 +1,4 @@
-/**
- * Componente modale per la creazione o modifica di una lista.
- * @param {object} props - Le proprietà del componente.
- * @param {boolean} props.show - Indica se il modale deve essere mostrato.
- * @param {object|null} props.list - L'oggetto lista da modificare (null per la creazione).
- * @param {function} props.onClose - Funzione per chiudere il modale.
- * @param {function} props.onSave - Funzione per salvare la lista.
- */
+
 import React, { useState, useEffect, useContext } from 'react';
 import { UIContext } from '../../contexts/UIContext';
 

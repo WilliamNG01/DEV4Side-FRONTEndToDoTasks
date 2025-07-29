@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback } from 'react';
 
+
 // --- Contesti React per la gestione dello stato globale ---
 // AuthContext: Gestisce lo stato di autenticazione (token JWT).
 const AuthContext = createContext(null);
@@ -10,9 +11,11 @@ const UIContext = createContext(null);
 
 // --- Servizio API per le chiamate al backend ---
 // Sostituisci questo URL con l'indirizzo del tuo backend API .NET 8.
-const API_BASE_URL = 'https://webapitodolist20250728153145.azurewebsites.net'; 
+//const API_BASE_URL = 'https://webapitodolist20250728153145.azurewebsites.net';
+const API_BASE_URL = 'https://localhost:7129'; 
 
 const Api = {
+  
   /**
    * Effettua una richiesta di login al backend.
    * @param {object} credentials - Oggetto contenente username e password.

@@ -1,42 +1,78 @@
 import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
-import { UIContext } from '../../contexts/UIContext';
+//import { UIContext } from '../../contexts/UIContext'; Rimosso UIContext perché setCurrentPage non è più usato per la navigazione principale
+// Importa useNavigate se hai bisogno di navigazione programmatica (es. dopo logout)
+
 
 const Header = () => {
-  const { logout } = useContext(AuthContext);
-  const { currentPage, setCurrentPage, setSelectedListId } = useContext(UIContext);
-
-  const handleGoToLists = () => {
-    setSelectedListId(null);
-    setCurrentPage('lists');
-  };
+  const { token, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <header className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
       <div className="container-fluid">
-        <a className="navbar-brand d-flex align-items-center" href="#" onClick={handleGoToLists}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-card-checklist me-2" viewBox="0 0 16 16">
-            <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
-            <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0M7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/>
-          </svg>
-          Task Board Semplificata
-        </a>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <Link className="navbar-brand" to="/home">
+          <i className="bi bi-check2-square me-2"></i>
+          App Liste & Compiti
+        </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
-            {currentPage !== 'login' && (
-              <li className="nav-item">
-                <button className="btn btn-outline-light rounded-pill px-4" onClick={logout}>
-                  Logout
-                </button>
-              </li>
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            {token && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link text-white" to="/home">
+                    Home
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link text-white" to="/lists">
+                    Le Mie Liste
+                  </Link>
+                </li>
+              </>
+            )}
+            {!token && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link text-white" to="/home">
+                    Home
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
+          <div className="d-flex">
+            {token ? (
+              <button className="btn btn-danger" onClick={logout}>
+                <i className="bi bi-box-arrow-right me-2"></i>
+                Logout
+              </button>
+            ) : (
+              <>
+                <button className="btn btn-outline-light me-2" onClick={() => navigate('/login')}>
+                  Login
+                </button>
+                <button className="btn btn-success" onClick={() => navigate('/register')}>
+                  Registrati
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 

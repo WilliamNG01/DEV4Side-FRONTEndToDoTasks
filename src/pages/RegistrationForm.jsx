@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-// Puoi importare UIContext se hai un sistema di notifica globale
+import { useNavigate  } from 'react-router-dom';
 import { UIContext } from '../contexts/UIContext.jsx'; // Decommentato
 
 // URL base della tua API di backend. Assicurati di adattare questo URL.
@@ -8,7 +8,7 @@ const API_BASE_URL = 'https://localhost:7129'; // Adatta all'URL del tuo backend
 
 const RegistrationForm = () => {
   const { showNotification } = useContext(UIContext); // Decommentato e usato
-
+  const navigate = useNavigate();
   // Stati per ogni campo del form, basati su RegisterUserDto
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -81,6 +81,7 @@ const RegistrationForm = () => {
       setBirthDate('');
       setPassword('');
       setConfirmPassword('');
+      navigate('/login'); // Reindirizza alla pagina di login dopo la registrazione
 
     } catch (err) {
       console.error('Errore di registrazione:', err);

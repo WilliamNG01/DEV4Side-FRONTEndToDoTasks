@@ -38,8 +38,8 @@ export const UIProvider = ({ children }) => {
 
   // Il valore che verrà fornito a tutti i consumatori del contesto
   const uiContextValue = {
-    currentPage,
-    setCurrentPage,
+    //currentPage,
+    //setCurrentPage,
     selectedListId,
     setSelectedListId,
     notification,

@@ -5,7 +5,7 @@ export const AuthContext = createContext(null);
 
 // URL base della tua API di backend. Assicurati di aggiornarlo con il tuo URL reale.
 // In un progetto reale, questo verrebbe gestito tramite variabili d'ambiente (es. process.env.REACT_APP_API_BASE_URL)
-const API_BASE_URL = 'https://webapitodolist20250728153145.azurewebsites.net'; 
+const API_BASE_URL = 'https://localhost:7129'; 
 
 /**
  * Componente Provider per l'AuthContext.
@@ -78,9 +78,12 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     localStorage.removeItem('jwt_token');
     setError(null);
-    // Potresti voler reindirizzare l'utente alla pagina di login qui
-    // Esempio: history.push('/login'); se usi React Router
-  }, []);
+    setLists([]);
+    setTasks([]);
+    setSelectedListId(null);
+    setCurrentPage('login'); // Redirects the user to the login page
+    showNotification('Logout effettuato con successo.', 'info');
+  }, [showNotification]);
 
   /**
    * Funzione helper per effettuare chiamate API autenticate.

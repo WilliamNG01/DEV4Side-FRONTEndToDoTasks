@@ -1,6 +1,7 @@
-// src/App.js - Il componente principale dell'applicazione
-
 import React, { useState, useEffect, useCallback } from 'react';
+// Rimuovi BrowserRouter da qui, dovrebbe essere solo in main.jsx
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+
 import { AuthContext } from './contexts/AuthContext';
 import { DataContext } from './contexts/DataContext';
 import { UIContext } from './contexts/UIContext';
@@ -11,14 +12,26 @@ import Login from './pages/Login';
 import Lists from './pages/Lists';
 import Tasks from './pages/Tasks';
 import RegistrationForm from './pages/RegistrationForm';
+import HomePage from './pages/HomePage';
+
+// Componente Wrapper per le rotte private
+const PrivateRoute = ({ children }) => {
+  const { token } = React.useContext(AuthContext);
+  // Usa React.useContext per chiarezza, anche se useContext è già importato
+  return token ? children : <Navigate to="/login" replace />;
+};
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('jwt_token'));
   const [lists, setLists] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [currentPage, setCurrentPage] = useState(token ? 'lists' : 'login');
+  // Rimuovi completamente `currentPage`
+  // const [currentPage, setCurrentPage] = useState(token ? 'home' : 'login');
   const [selectedListId, setSelectedListId] = useState(null);
   const [notification, setNotification] = useState({ message: '', type: '' });
+
+  // Inizializza useNavigate qui, all'inizio del componente App
+  const navigate = useNavigate(); // <-- Questo è corretto!
 
   const showNotification = useCallback((message, type) => {
     setNotification({ message, type });
@@ -29,21 +42,31 @@ export default function App() {
   }, []);
 
   const login = useCallback(async (usernameoremail, password) => {
-    const fetchedToken = await Api.login({ usernameoremail, password });
-    setToken(fetchedToken);
-    localStorage.setItem('jwt_token', fetchedToken);
-    setCurrentPage('lists');
-  }, []);
+    try {
+      // Inserisci qui il blocco try-catch completo per la chiamata API
+      // per catturare errori di rete o credenziali non valide
+      const fetchedToken = await Api.login({ usernameoremail, password });
+      setToken(fetchedToken);
+      // Il localStorage.setItem('jwt_token', fetchedToken); è già gestito da useEffect in AuthContext,
+      // ma puoi lasciarlo qui per ridondanza se preferisci.
+      localStorage.setItem('jwt_token', fetchedToken);
+      showNotification('Accesso effettuato con successo!', 'success');
+      navigate('/home'); // <-- Usa navigate per il reindirizzamento
+    } catch (error) {
+      showNotification(error.message || 'Credenziali non valide.', 'danger');
+    }
+  }, [navigate, showNotification]); // Aggiungi navigate alle dipendenze
 
   const logout = useCallback(() => {
     setToken(null);
-    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('jwt_token'); // Già gestito dall'useEffect in AuthContext
     setLists([]);
     setTasks([]);
     setSelectedListId(null);
-    setCurrentPage('login');
+    // Rimuovi setCurrentPage('login');
     showNotification('Logout effettuato con successo.', 'info');
-  }, [showNotification]);
+    navigate('/login'); // <-- Usa navigate per il reindirizzamento al logout
+  }, [setLists, setTasks, setSelectedListId, showNotification, navigate]);
 
   const fetchLists = useCallback(async () => {
     if (!token) return;
@@ -87,14 +110,15 @@ export default function App() {
       setLists((prev) => prev.filter((l) => l.id !== id));
       if (selectedListId === id) {
         setSelectedListId(null);
-        setCurrentPage('lists');
+        // Rimuovi setCurrentPage('lists');
+        navigate('/lists'); // Reindirizza a /lists dopo aver cancellato la lista corrente
       }
     } catch (error) {
       showNotification(error.message, 'danger');
       if (error.message.includes('Non autorizzato')) logout();
       throw error;
     }
-  }, [token, selectedListId, logout, showNotification]);
+  }, [token, selectedListId, logout, showNotification, navigate]); // Aggiungi navigate
 
   const fetchTasks = useCallback(async (listId) => {
     if (!token || !listId) return;
@@ -143,33 +167,42 @@ export default function App() {
     }
   }, [token, logout, showNotification]);
 
+  // Questo useEffect ora reagisce solo al token
+  // La navigazione è gestita dal router
   useEffect(() => {
     if (token) {
-      setCurrentPage('lists');
+      // Rimuovi setCurrentPage('lists');
       fetchLists();
     } else {
-      setCurrentPage('login');
+      // Rimuovi setCurrentPage('login');
+      // Il reindirizzamento al login è già gestito dalle PrivateRoute o dalla rotta '/'
     }
-  }, [token, fetchLists]);
+    // Se il token diventa null (es. logout), il PrivateRoute reindirizzerà a /login
+  }, [token, fetchLists]); // Rimuovi setCurrentPage dalle dipendenze
 
-  const renderPage = () => {
-    switch (currentPage) {
-    case 'login':
-      return <Login />;
-    case 'register': 
-      return <RegistrationForm />;
-    case 'lists':
-      return <Lists />;
-    case 'tasks':
-      return <Tasks />;
-    default:
-      return <Login />;
-  }
-  };
+  // Rimuovi completamente la funzione renderPage
+  // const renderPage = () => {
+  //   switch (currentPage) {
+  //     case 'home':
+  //       return <HomePage />;
+  //     case 'login':
+  //       return <Login />;
+  //     case 'register':
+  //       return <RegistrationForm />;
+  //     case 'lists':
+  //       return <Lists />;
+  //     case 'tasks':
+  //       return <Tasks />;
+  //     default:
+  //       return <HomePage />;
+  //   }
+  // };
 
   return (
     <>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossOrigin="anonymous"></link>
+      {/* Questi link e stili CSS statici dovrebbero essere importati/gestiti in modo più React-friendly */}
+      {/* Ad esempio, con un file CSS esterno o con un'utility come `react-helmet` per i link */}
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossOrigin="anonymous"></link>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></link>
 
       <style>
@@ -305,8 +338,9 @@ export default function App() {
         `}
       </style>
 
+      {/* Rimuovi <BrowserRouter> da qui, l'abbiamo spostato in main.jsx */}
       <AuthContext.Provider value={{ token, login, logout }}>
-        <UIContext.Provider value={{ currentPage, setCurrentPage, selectedListId, setSelectedListId, showNotification }}>
+        <UIContext.Provider value={{ selectedListId, setSelectedListId, notification, showNotification }}>
           <DataContext.Provider value={{
             lists, tasks,
             fetchLists, addList, updateList, deleteList,
@@ -314,14 +348,30 @@ export default function App() {
           }}>
             <Header />
             <main className="flex-grow-1">
-              {renderPage()}
+              <Routes> {/* Qui definiamo le rotte */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<RegistrationForm />} />
+
+                {/* Rotta di default per utenti non autenticati o root */}
+                <Route path="/" element={token ? <Navigate to="/home" replace /> : <Login />} />
+
+                {/* Rotte protette (solo se l'utente è loggato) */}
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/lists" element={<PrivateRoute><Lists /></PrivateRoute>} />
+                {/* Rotta per i task con un parametro ID della lista */}
+                <Route path="/tasks/:listId" element={<PrivateRoute><Tasks /></PrivateRoute>} />
+
+                {/* Catch-all per rotte non trovate, reindirizza alla home o al login */}
+                <Route path="*" element={token ? <Navigate to="/home" replace /> : <Login />} />
+              </Routes>
             </main>
             <Notification message={notification.message} type={notification.type} onClose={() => setNotification({ message: '', type: '' })} />
           </DataContext.Provider>
         </UIContext.Provider>
       </AuthContext.Provider>
 
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossOrigin="anonymous"></script>
+      {/* Questo script dovrebbe essere nel tuo index.html o gestito in modo diverso in React */}
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossOrigin="anonymous"></script>
     </>
   );
 }

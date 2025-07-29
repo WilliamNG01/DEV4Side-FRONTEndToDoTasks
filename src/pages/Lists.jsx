@@ -3,10 +3,12 @@ import { DataContext } from '../contexts/DataContext';
 import { UIContext } from '../contexts/UIContext';
 import ConfirmModal from '../components/modals/ConfirmModal';
 import ListModal from '../components/modals/ListModal';
+import { useNavigate } from 'react-router-dom';
 
 const Lists = () => {
   const { lists, fetchLists, addList, updateList, deleteList } = useContext(DataContext);
-  const { setCurrentPage, setSelectedListId, showNotification } = useContext(UIContext);
+  const { setSelectedListId, showNotification } = useContext(UIContext);
+  const navigate = useNavigate();
 
   const [showListModal, setShowListModal] = useState(false);
   const [editingList, setEditingList] = useState(null);
@@ -19,7 +21,7 @@ const Lists = () => {
 
   const handleViewTasks = (listId) => {
     setSelectedListId(listId);
-    setCurrentPage('tasks');
+    navigate(`/tasks/${listId}`);
   };
 
   const handleCreateList = () => {
