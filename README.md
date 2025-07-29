@@ -93,15 +93,50 @@ Tutte le operazioni (login, registrazione, gestione task/liste) avvengono tramit
 ## 📁 Struttura del Codice
 
 ```
+in questa srtuttura manca 'assets' e 'style'. potresti aggiungere e farmi una struttura con i nomi dei file nelle cartelle
 src/
-├── api/               → Configurazione delle chiamate API
-├── components/        → Componenti riutilizzabili
-│   ├── modals/        → Modali per task e liste
-│   └── ui/            → UI generica (bottoni, notifiche)
-├── contexts/          → Gestione dello stato globale
-├── pages/             → Login, Registrazione, Liste, Task
-├── utils/             → Funzioni di supporto (es. validazioni)
-└── App.jsx            → Componente principale
+│   App.css
+│   App.jsx
+│   index.css
+│   main.jsx
+│
+├── api/
+│   └── apiService.js
+│
+├── assets/
+│   └── react.svg
+│
+├── components/
+│   ├── modals/
+│   │   ├── ConfirmModal.jsx
+│   │   ├── ListModal.jsx
+│   │   └── TaskModal.jsx
+│   │
+│   └── ui/
+│       ├── Header.jsx
+│       └── Notification.jsx
+│
+├── contexts/
+│   ├── AuthContext.jsx
+│   ├── DataContext.jsx
+│   └── UIContext.jsx
+│
+├── pages/
+│   ├── HomePage.jsx
+│   ├── Lists.jsx
+│   ├── Login.jsx
+│   ├── RegistrationForm.jsx
+│   └── Tasks.jsx
+│
+├── styles/
+│   ├── components.scss
+│   ├── main.scss
+│   ├── _base.scss
+│   ├── _mixins.scss
+│   └── _variables.scss
+│
+└── utils/
+    └── helpers.jsx
 ```
 
 ---

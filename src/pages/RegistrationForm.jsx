@@ -1,20 +1,17 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate  } from 'react-router-dom';
-import { UIContext } from '../contexts/UIContext.jsx'; // Decommentato
-
-// URL base della tua API di backend. Assicurati di adattare questo URL.
-// In produzione, useresti variabili d'ambiente (es: process.env.REACT_APP_API_BASE_URL)
-const API_BASE_URL = 'https://webapitodolist20250728153145.azurewebsites.net'; // Adatta all'URL del tuo backend
+import { useNavigate } from 'react-router-dom';
+import { UIContext } from '../contexts/UIContext.jsx';
+import Api from '../api/apiService.js'; // ✅ uso del servizio centrale
 
 const RegistrationForm = () => {
-  const { showNotification } = useContext(UIContext); // Decommentato e usato
+  const { showNotification } = useContext(UIContext);
   const navigate = useNavigate();
   // Stati per ogni campo del form, basati su RegisterUserDto
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
-  const [birthDate, setBirthDate] = useState(''); // Formato YYYY-MM-DD per input type="date"
+  const [birthDate, setBirthDate] = useState(''); 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(''); // Per la conferma della password
 
@@ -23,78 +20,34 @@ const RegistrationForm = () => {
   const [messageType, setMessageType] = useState(''); // 'success' o 'danger'
   const [loading, setLoading] = useState(false);
 
-  /**
-   * Gestisce l'invio del form di registrazione.
-   * Invia i dati utente all'API di backend.
-   */
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Impedisce il ricaricamento della pagina
+    e.preventDefault();
 
-    setMessage(''); // Resetta i messaggi
-    setMessageType('');
-    setLoading(true);
-
-    // Validazione lato client
     if (password !== confirmPassword) {
-      setMessage('Le password non corrispondono.');
-      setMessageType('danger');
-      setLoading(false);
-      showNotification('Le password non corrispondono.', 'danger'); // Ora usa showNotification
+      showNotification('Le password non corrispondono.', 'danger');
       return;
     }
 
-    // Creazione dell'oggetto dati da inviare, corrispondente a RegisterUserDto
     const userData = {
       firstName,
       lastName,
       userName,
       email,
-      // Converte la data di nascita in formato ISO 8601 se fornita
       birthDate: birthDate ? new Date(birthDate).toISOString() : null,
       password,
     };
 
     try {
-      // Endpoint di registrazione della tua API (es: /auth/register o /users/register)
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        // Tenta di leggere il messaggio di errore dal backend
-        const errorData = await response.json().catch(() => ({ message: response.statusText }));
-        throw new Error(errorData.message || 'Registrazione fallita. Riprova.');
-      }
-
-      // Se la registrazione ha successo
-      setMessage('Registrazione avvenuta con successo! Ora puoi effettuare il login.');
-      setMessageType('success');
-      showNotification('Registrazione avvenuta con successo! Ora puoi effettuare il login.', 'success'); // Ora usa showNotification
-
-      // Resetta il form dopo un successo
-      setFirstName('');
-      setLastName('');
-      setUserName('');
-      setEmail('');
-      setBirthDate('');
-      setPassword('');
-      setConfirmPassword('');
-      navigate('/login'); // Reindirizza alla pagina di login dopo la registrazione
-
+      await Api.register(userData); // ✅ chiamata centralizzata
+      showNotification('Registrazione avvenuta con successo!', 'success');
+      navigate('/login');
     } catch (err) {
-      console.error('Errore di registrazione:', err);
-      setMessage(err.message || 'Si è verificato un errore inatteso durante la registrazione.');
-      setMessageType('danger');
-      showNotification(err.message || 'Si è verificato un errore inatteso durante la registrazione.', 'danger'); // Ora usa showNotification
-    } finally {
-      setLoading(false);
+      showNotification(err.message, 'danger');
     }
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div className="card shadow-lg p-4 rounded-lg" style={{ maxWidth: '500px', width: '100%' }}>
         <h2 className="card-title text-center mb-4 text-success">Registrati</h2>
         {/* Visualizzazione dei messaggi di feedback */}

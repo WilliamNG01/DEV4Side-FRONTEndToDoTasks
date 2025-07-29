@@ -81,5 +81,35 @@ const Api = {
       throw error;
     }
   },
+
+ async register(userData) {
+  const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData),
+  });
+
+  const contentType = response.headers.get('Content-Type') || '';
+
+  if (!response.ok) {
+    if (contentType.includes('application/json')) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Registrazione fallita');
+    } else {
+      const errorText = await response.text();
+      throw new Error(errorText || 'Errore nella risposta del server');
+    }
+  }
+
+  if (response.status === 204) {
+    return {};
+  }
+
+  if (contentType.includes('application/json')) {
+    return await response.json();
+  } else {
+    return await response.text(); // Se il server risponde con semplice testo
+  }
+}
 };
 export default Api;
